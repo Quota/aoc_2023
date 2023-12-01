@@ -14,20 +14,36 @@
 ;; part 1
 
 (defn extract-number-from-digits
+  "Returns the first and last digit of every line as 2-digit-number."
   [line]
-  (str/replace line #"^\D*(\d)(?:.*(\d))?\D*$"
-               (fn[[_ d1 d2]] (str d1 (or d2 d1)))))
+  (-> line
+      (str/replace #"^\D*(\d)(?:.*(\d))?\D*$" (fn[[_ g1 g2]] (str g1 (or g2 g1))))
+      util/parse-int))
 
 (defn part-1
   []
   (->> (parse-input)
        (map extract-number-from-digits)
-       (map util/parse-int)
        (apply +)))
 
 ;; part 2
 
+(def WORD->DIGIT { "one" 1, "two" 2, "three" 3, "four" 4, "five" 5, "six" 6, "seven" 7, "eight" 8, "nine" 9 })
+
+(defn extract-number-from-digits-and-words
+  "Returns the first and last digit or digit-word of every line as
+  2-digit-number."
+  [line]
+  (-> line
+      (str/replace #"^.*?(\d|one|two|three|four|five|six|seven|eight|nine)(?:.*(\d|one|two|three|four|five|six|seven|eight|nine))?.*?$"
+                   (fn[[_ g1 g2]]
+                     (let [d1 (WORD->DIGIT g1 g1)
+                           d2 (WORD->DIGIT g2 g2)]
+                       (str d1 (or d2 d1)))))
+      util/parse-int))
+
 (defn part-2
   []
   (->> (parse-input)
-       count))
+       (map extract-number-from-digits-and-words)
+       (apply +)))
