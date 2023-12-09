@@ -4,6 +4,8 @@
   (:require [clj-http.client :as client])
   (:import [java.io IOException]))
 
+;;; parsing numbers
+
 (defn parse-int
   "Parses a string into an integer. Blank strings yield nil."
   [s]
@@ -44,6 +46,7 @@
   (parse-numbers #":" [:vec] (list "1:2:3" "4:5:6"))
   )
 
+;;; getting the input
 
 (def *session-cookie-global*
   (str (System/getProperty "user.home") "/.aoc-session-cookie.txt"))
@@ -85,3 +88,18 @@
 
   (get-input 1)
 )
+
+;;; math functions
+
+(defn gcd
+  "Return greatest common divisor of a and b."
+  [a b]
+  (if (zero? b)
+    a
+    (recur b (mod a b))))
+
+(defn lcm
+  "Returns lowest common multiple of a and b.
+  Note: This method is not tested with negative numbers."
+  [a b]
+  (/ (Math/abs (* a b)) (gcd a b)))
